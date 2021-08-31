@@ -1,0 +1,6 @@
+project\DatabaseTest.class
+project\DataUnitTests.class
+project\RecordTest.class
+project\LoaderTest.class
+project\CovidTest.class
+project\AirportTest.class

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Map Demo</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+    /*embedded css for map*/
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            height: 100%;
+        }
+    </style>
+
+    <script>
+<!--Embedded javascript for google maps API-->
+    var map;
+
+<!--    phase 3 will have long and latitude inputs from routes, these are used for demo purposes-->
+    var dest1 = [-43.4876, 172.5374]
+    var dest2 = [-37.0082, 174.7850]
+
+    var marker1;
+    var marker2;
+    var path;
+
+    var marker_icon = 'airportIcon.png';
+
+/*
+For the line connecting the two airports, path co-ordinates are needed. If we have for information
+about the path of the flight, we can input the long and lat data into flightPlanCoordinates to show the curve of
+the flight rather than a direct line connecting them
+*/
+    var flightPlanCoordinates = [
+            {lat: dest1[0], lng: dest1[1]},
+            {lat: dest2[0], lng: dest2[1]}
+        ];
+
+    const lineSymbol = {
+        path: "M 0,-1 0,1",
+        strokeOpacity: 1,
+        scale: 4
+  };
+
+
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+<!-- had to manually enter half way because embedded map, automatic scaling and zoom is buggy      -->
+
+            <!-- uncomment when reposition function works   -->
+            <!--  center: {lat: dest1[0], lng:  dest1[1]},-->
+
+            center:{lat: -39.980469, lng:173.806084},
+            zoom: 5.8,
+            zoomControl: false,
+            mapTypeControl: false,
+            scaleControl: false,
+            streetViewControl: false,
+            rotateControl: false,
+            fullscreenControl: false
+        });
+
+
+        displayRoute(dest1, dest2);
+    }
+
+    function displayRoute(dest1, dest2) {
+        marker1 = new google.maps.Marker({
+            position: {lat: dest1[0], lng:  dest1[1]},
+            icon: marker_icon,
+            map: map,
+            title: 'Christchurch  International Airport'
+        });
+
+        marker2 = new google.maps.Marker({
+            position: {lat: dest2[0], lng:  dest2[1]},
+            map: map,
+            title: 'Auckland  International Airport',
+            icon: marker_icon
+
+        });
+
+        var flightPath = new google.maps.Polyline({
+            path: flightPlanCoordinates,
+            strokeColor: 'Blue',
+            strokeOpacity: 0,
+
+            icons: [
+              {
+                icon: lineSymbol,
+                offset: "0",
+                repeat: "25px"
+              }
+    ],
+        });
+
+        flightPath.setMap(map);
+
+<!--  will fix automatic reposition-->
+<!--        repositionMap(flightPath);-->
+    }
+
+    function repositionMap(flightPath) {
+    <!-- automatically scale the map between the two points -->
+<!--    BUGGY WITH EMBEDDED MAP (Only stand alone)-->
+        var bounds = new google.maps.LatLngBounds();
+
+        bounds.extend(marker1.position);
+        bounds.extend(marker2.position);
+
+        map.fitBounds(bounds);
+    }
+</script>
+</head>
+<body>
+<div id="map"></div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnLNKAJheX6CeDKX7tqtTtSBpcpGcRDBg&callback=initMap"
+        async defer></script>
+</body>
+</html>
